@@ -1,18 +1,30 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-]);
+const prisma = new PrismaClient();
 
-export default eslintConfig;
+async function main() {
+  const adminPassword = await bcrypt.hash("admin123", 10);
+
+  await prisma.user.upsert({
+    where: { email: "admin@avidev.studio" },
+    update: {},
+    create: {
+      name: "Admin AviDev",
+      email: "admin@avidev.studio",
+      password: adminPassword,
+      role: "ADMIN",
+    },
+  });
+
+  console.log("Seed sukses 🔥");
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

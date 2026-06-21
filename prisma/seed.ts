@@ -6,26 +6,18 @@ const prisma = new PrismaClient();
 async function main() {
   const adminPassword = await bcrypt.hash("admin123", 10);
 
-  await prisma.user.upsert({
-    where: {
-      email: "admin@avidev.studio",
-    },
-    update: {},
-    create: {
+  await prisma.user.create({
+    data: {
       name: "Admin AviDev",
       email: "admin@avidev.studio",
       password: adminPassword,
+      role: "ADMIN",
     },
   });
 
-  console.log("Seed berhasil");
+  console.log("Seed OK 🔥");
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());
