@@ -4,18 +4,20 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminPassword = await bcrypt.hash("admin123", 10);
+ const adminPassword = await bcrypt.hash("adminAvidev202610", 10);
 
-  await prisma.user.upsert({
-    where: { email: "admin@avidev.studio" },
-    update: {},
-    create: {
-      name: "Admin AviDev",
-      email: "admin@avidev.studio",
-      password: adminPassword,
-      role: "ADMIN",
-    },
-  });
+   await prisma.user.upsert({
+  where: { email: "AviDevelopmentStudio@gmail.com" },
+  update: {
+    password: adminPassword,
+  },
+  create: {
+    name: "Admin",
+    email: "AviDevelopmentStudio@gmail.com",
+    password:adminPassword ,
+    role: "ADMIN",
+  },
+});
 
   console.log("Seed sukses 🔥");
 }
@@ -27,4 +29,4 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
-  });
+  })
